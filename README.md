@@ -9,7 +9,7 @@ breakout;
 
 module="module-ladspa-sink" - string: module to load for hardware sink found at startup or hot-plugged
 
-module_args="sink_name=%m-compressor sink_master=%m dont_move=1 plugin=sc4_1882 label=sc4 control=1,1.5,300,-20,3,1,10" - string: arguments to pass to the module as it loads
+module_args="sink_name=%m-compressor sink_master=%m dont_move=1 plugin=sc4_1882 label=sc4 control=1,1.5,300,-20,3,1,10" - string: arguments to pass to the module as it loads  ("%m" is replaced by the name of the sink that triggered the module load)
 
 switch_on_connect=1 - boolean: automatically switch to a sink of the module just loaded (like module-switch-on-connect does but without all of its options)
 
