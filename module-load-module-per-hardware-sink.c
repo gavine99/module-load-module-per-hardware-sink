@@ -8,9 +8,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ***/
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
 
 #include <pulse/xmalloc.h>
 
@@ -30,6 +28,7 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 PA_MODULE_AUTHOR("gavine99");
 PA_MODULE_DESCRIPTION("When a sink is added move sink input streams to it");
 PA_MODULE_VERSION(PACKAGE_VERSION);
+//PA_MODULE_VERSION("0.1");
 PA_MODULE_LOAD_ONCE(false);
 PA_MODULE_USAGE(
         "module=<module module to load>, "
@@ -51,6 +50,8 @@ struct userdata {
     bool switch_on_connect;
     bool steal_default;
 };
+
+void pa__done(pa_module*m);
 
 pa_module* load_module(pa_core* c, pa_sink* master_sink, const char* module, const char* args, struct userdata* u);
 
@@ -113,7 +114,7 @@ static pa_hook_result_t sink_put_hook_callback(pa_core *c, pa_sink *new_sink, vo
         return PA_HOOK_OK;
     }
 
-    pa_log_info("The module just loaded doesn't have it's own sink the default sink was not changed. That's ok.");
+    pa_log_info("The module just loaded doesn't have it's own sink so the default sink was not changed. That's ok.");
 
     return PA_HOOK_OK;
 }
@@ -126,8 +127,11 @@ static pa_hook_result_t default_sink_changed_callback(pa_core *c, pa_sink *new_s
     uint32_t idx;
 
     pa_assert(c);
-    pa_assert(new_sink);
+    // pa_assert(new_sink);
     pa_assert(userdata);
+
+    if (new_sink == NULL)
+        return PA_HOOK_OK;
 
     if (u->steal_default == false)
         return PA_HOOK_OK;
